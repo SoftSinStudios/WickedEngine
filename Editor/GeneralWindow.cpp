@@ -26,8 +26,8 @@ void GeneralWindow::CreateSection(SettingsSection& section, const std::string& t
 	section.configKey = configKey;
 	section.widgets = widgets;
 	auto& layoutConfig = editor->main->config.GetSection("layout");
-	section.expanded = layoutConfig.Has(configKey) ? layoutConfig.GetBool(configKey) : expandedByDefault;
-	section.header.Create(configKey);
+	section.expanded = layoutConfig.Has(configKey.c_str()) ? layoutConfig.GetBool(configKey.c_str()) : expandedByDefault;
+	section.header.Create(configKey.c_str());
 	section.header.SetSize(XMFLOAT2(100, 26));
 	section.header.SetShadowRadius(0);
 	section.header.font.params.h_align = wi::font::WIFALIGN_LEFT;
@@ -35,7 +35,7 @@ void GeneralWindow::CreateSection(SettingsSection& section, const std::string& t
 	SettingsSection* sectionPtr = &section;
 	section.header.OnClick([this, sectionPtr](wi::gui::EventArgs args) {
 		sectionPtr->expanded = !sectionPtr->expanded;
-		editor->main->config.GetSection("layout").Set(sectionPtr->configKey, sectionPtr->expanded);
+		editor->main->config.GetSection("layout").Set(sectionPtr->configKey.c_str(), sectionPtr->expanded);
 		editor->main->config.Commit();
 		UpdateSection(*sectionPtr);
 		ResizeLayout();
