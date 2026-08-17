@@ -20,6 +20,39 @@ enum class Theme : uint64_t
 	Custom = ~0ull
 };
 
+void GeneralWindow::CreateSection(SettingsSection& section, const std::string& title, const std::string& configKey, bool expandedByDefault, wi::vector<wi::gui::Widget*> widgets)
+{
+	section.title = title;
+	section.configKey = configKey;
+	section.widgets = widgets;
+	auto& layoutConfig = editor->main->config.GetSection("layout");
+	section.expanded = layoutConfig.Has(configKey) ? layoutConfig.GetBool(configKey) : expandedByDefault;
+	section.header.Create(configKey);
+	section.header.SetSize(XMFLOAT2(100, 26));
+	section.header.SetShadowRadius(0);
+	section.header.font.params.h_align = wi::font::WIFALIGN_LEFT;
+	section.header.SetTooltip("Expand or collapse the " + title + " settings.");
+	SettingsSection* sectionPtr = &section;
+	section.header.OnClick([this, sectionPtr](wi::gui::EventArgs args) {
+		sectionPtr->expanded = !sectionPtr->expanded;
+		editor->main->config.GetSection("layout").Set(sectionPtr->configKey, sectionPtr->expanded);
+		editor->main->config.Commit();
+		UpdateSection(*sectionPtr);
+		ResizeLayout();
+	});
+	AddWidget(&section.header);
+	UpdateSection(section);
+}
+
+void GeneralWindow::UpdateSection(SettingsSection& section)
+{
+	section.header.SetText((section.expanded ? "-  " : "+  ") + section.title);
+	for (wi::gui::Widget* widget : section.widgets)
+	{
+		widget->SetVisible(section.expanded);
+	}
+}
+
 void GeneralWindow::Create(EditorComponent* _editor)
 {
 	editor = _editor;
@@ -1491,6 +1524,15 @@ void GeneralWindow::Create(EditorComponent* _editor)
 	});
 	AddWidget(&duplicateCollidersButton);
 
+	CreateSection(generalSection, "General", "options.section.general", true, { &masterVolumeSlider, &entityTreeSortingComboBox, &languageCombo, &placeInFrontOfCameraCheckBox });
+	CreateSection(savingSection, "Saving", "options.section.saving", true, { &saveModeComboBox, &saveCompressionCheckBox });
+	CreateSection(appearanceSection, "Appearance", "options.section.appearance", true, { &themeCombo, &themeEditorButton, &focusModeCheckBox, &disableRoundCornersCheckBox, &disableGradientCheckBox });
+	CreateSection(viewportSection, "Viewport Display", "options.section.viewport", false, { &gridHelperCheckBox, &wireFrameComboBox, &nameDebugCheckBox, &aabbDebugCheckBox });
+	CreateSection(debugSection, "Debug Visualization", "options.section.debug", false, { &physicsDebugCheckBox, &physicsDebugMaxDistanceSlider, &boneLinesCheckBox, &debugEmittersCheckBox, &debugForceFieldsCheckBox, &debugRaytraceBVHCheckBox, &envProbesCheckBox, &cameraVisCheckBox, &colliderVisCheckBox, &springVisCheckBox, &splineVisCheckBox, &freezeCullingCameraCheckBox, &disableAlbedoMapsCheckBox, &forceDiffuseLightingCheckBox, &forceUnlitCheckBox });
+	CreateSection(transformSection, "Transform Gizmo", "options.section.transform", false, { &transformToolOpacitySlider, &transformToolDarkenSlider, &transformToolScaleSlider, &transformToolThicknessSlider, &outlineOpacitySlider, &bonePickerOpacitySlider, &skeletonsVisibleCheckBox });
+	CreateSection(developerSection, "Developer Tools", "options.section.developer", false, { &versionCheckBox, &fpsCheckBox, &otherinfoCheckBox, &localizationButton, &eliminateCoarseCascadesButton, &ddsConvButton, &duplicateCollidersButton });
+	transformToolLabel.SetVisible(false);
+
 	SetVisible(false);
 }
 
@@ -1582,75 +1624,84 @@ void GeneralWindow::ReloadThemes()
 void GeneralWindow::ResizeLayout()
 {
 	wi::gui::Window::ResizeLayout();
-
+	UpdateSection(generalSection);
+	UpdateSection(savingSection);
+	UpdateSection(appearanceSection);
+	UpdateSection(viewportSection);
+	UpdateSection(debugSection);
+	UpdateSection(transformSection);
+	UpdateSection(developerSection);
 	editor->main->config.GetSection("layout").Set("options.width", GetSize().x);
 	editor->main->config.GetSection("layout").Set("options.height", GetSize().y);
 
-	layout.add_right(versionCheckBox, fpsCheckBox, otherinfoCheckBox);
-
-	layout.add(masterVolumeSlider);
-
-	layout.add(saveModeComboBox);
-
-	layout.add_right(saveCompressionCheckBox);
-
-	layout.add(entityTreeSortingComboBox);
-
-	layout.add(themeCombo);
-	themeEditorButton.SetPos(XMFLOAT2(themeCombo.GetPos().x - themeCombo.GetLeftTextWidth() - themeEditorButton.GetSize().x - layout.padding * 2, themeCombo.GetPos().y));
-
-	layout.add(languageCombo);
-
-	layout.add_fullwidth(localizationButton);
-
-	layout.add_right(placeInFrontOfCameraCheckBox);
-
-	layout.add(wireFrameComboBox);
-	layout.add_right(physicsDebugCheckBox);
-	layout.add(physicsDebugMaxDistanceSlider);
-	layout.add_right(nameDebugCheckBox);
-	layout.add_right(gridHelperCheckBox);
-	layout.add_right(aabbDebugCheckBox);
-	layout.add_right(boneLinesCheckBox);
-	layout.add_right(debugEmittersCheckBox);
-	layout.add_right(debugForceFieldsCheckBox);
-	layout.add_right(debugRaytraceBVHCheckBox);
-	layout.add_right(envProbesCheckBox);
-	layout.add_right(cameraVisCheckBox);
-	layout.add_right(colliderVisCheckBox);
-	layout.add_right(springVisCheckBox);
-	layout.add_right(splineVisCheckBox);
-
-	layout.jump();
-
-	layout.add_right(freezeCullingCameraCheckBox);
-	layout.add_right(disableAlbedoMapsCheckBox);
-	layout.add_right(forceDiffuseLightingCheckBox);
-	layout.add_right(forceUnlitCheckBox);
-
-	layout.jump();
-
-	layout.add_right(focusModeCheckBox);
-	layout.add_right(disableRoundCornersCheckBox);
-	layout.add_right(disableGradientCheckBox);
-
-	layout.jump();
-
-	layout.add_fullwidth(transformToolLabel);
-	layout.add(transformToolOpacitySlider);
-	layout.add(transformToolDarkenSlider);
-	layout.add(transformToolScaleSlider);
-	layout.add(transformToolThicknessSlider);
-
-	layout.jump();
-
-	layout.add(outlineOpacitySlider);
-	layout.add(bonePickerOpacitySlider);
-	layout.add_right(skeletonsVisibleCheckBox);
-
-	layout.jump();
-
-	layout.add_fullwidth(eliminateCoarseCascadesButton);
-	layout.add_fullwidth(ddsConvButton);
-	layout.add_fullwidth(duplicateCollidersButton);
+	layout.add_fullwidth(generalSection.header);
+	if (generalSection.expanded)
+	{
+		layout.add(masterVolumeSlider);
+		layout.add(entityTreeSortingComboBox);
+		layout.add(languageCombo);
+		layout.add_right(placeInFrontOfCameraCheckBox);
+	}
+	layout.add_fullwidth(savingSection.header);
+	if (savingSection.expanded)
+	{
+		layout.add(saveModeComboBox);
+		layout.add_right(saveCompressionCheckBox);
+	}
+	layout.add_fullwidth(appearanceSection.header);
+	if (appearanceSection.expanded)
+	{
+		layout.add(themeCombo);
+		themeEditorButton.SetPos(XMFLOAT2(themeCombo.GetPos().x - themeCombo.GetLeftTextWidth() - themeEditorButton.GetSize().x - layout.padding * 2, themeCombo.GetPos().y));
+		layout.add_right(focusModeCheckBox);
+		layout.add_right(disableRoundCornersCheckBox);
+		layout.add_right(disableGradientCheckBox);
+	}
+	layout.add_fullwidth(viewportSection.header);
+	if (viewportSection.expanded)
+	{
+		layout.add_right(gridHelperCheckBox);
+		layout.add(wireFrameComboBox);
+		layout.add_right(nameDebugCheckBox);
+		layout.add_right(aabbDebugCheckBox);
+	}
+	layout.add_fullwidth(debugSection.header);
+	if (debugSection.expanded)
+	{
+		layout.add_right(physicsDebugCheckBox);
+		layout.add(physicsDebugMaxDistanceSlider);
+		layout.add_right(boneLinesCheckBox);
+		layout.add_right(debugEmittersCheckBox);
+		layout.add_right(debugForceFieldsCheckBox);
+		layout.add_right(debugRaytraceBVHCheckBox);
+		layout.add_right(envProbesCheckBox);
+		layout.add_right(cameraVisCheckBox);
+		layout.add_right(colliderVisCheckBox);
+		layout.add_right(springVisCheckBox);
+		layout.add_right(splineVisCheckBox);
+		layout.add_right(freezeCullingCameraCheckBox);
+		layout.add_right(disableAlbedoMapsCheckBox);
+		layout.add_right(forceDiffuseLightingCheckBox);
+		layout.add_right(forceUnlitCheckBox);
+	}
+	layout.add_fullwidth(transformSection.header);
+	if (transformSection.expanded)
+	{
+		layout.add(transformToolOpacitySlider);
+		layout.add(transformToolDarkenSlider);
+		layout.add(transformToolScaleSlider);
+		layout.add(transformToolThicknessSlider);
+		layout.add(outlineOpacitySlider);
+		layout.add(bonePickerOpacitySlider);
+		layout.add_right(skeletonsVisibleCheckBox);
+	}
+	layout.add_fullwidth(developerSection.header);
+	if (developerSection.expanded)
+	{
+		layout.add_right(versionCheckBox, fpsCheckBox, otherinfoCheckBox);
+		layout.add_fullwidth(localizationButton);
+		layout.add_fullwidth(eliminateCoarseCascadesButton);
+		layout.add_fullwidth(ddsConvButton);
+		layout.add_fullwidth(duplicateCollidersButton);
+	}
 }
