@@ -4,6 +4,25 @@ class EditorComponent;
 class GeneralWindow : public wi::gui::Window
 {
 public:
+	struct SettingsSection
+	{
+		wi::gui::Button header;
+		std::string title;
+		std::string configKey;
+		bool expanded = false;
+		wi::vector<wi::gui::Widget*> widgets;
+	};
+
+	SettingsSection generalSection;
+	SettingsSection savingSection;
+	SettingsSection appearanceSection;
+	SettingsSection viewportSection;
+	SettingsSection debugSection;
+	SettingsSection transformSection;
+	SettingsSection developerSection;
+
+	void CreateSection(SettingsSection& section, const std::string& title, const std::string& configKey, bool expandedByDefault, wi::vector<wi::gui::Widget*> widgets);
+	void UpdateSection(SettingsSection& section);
 	void Create(EditorComponent* editor);
 
 	EditorComponent* editor = nullptr;
