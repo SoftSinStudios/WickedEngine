@@ -536,7 +536,7 @@ void GeneralWindow::Create(EditorComponent* _editor)
 			theme.font.color = wi::Color(232, 234, 238, 255);
 			theme.font.shadow_color = wi::Color(0, 0, 0, 160);
 			theme_color_gradient = wi::Color(143, 52, 73, 140);
-			theme_color_wave = wi::Color(176, 68, 94, 70);
+			theme_color_wave = wi::Color::Transparent();
 			editor->themeEditorWnd.imageResource = {};
 			break;
 		case Theme::Dark:
