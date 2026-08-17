@@ -431,8 +431,6 @@ void GeneralWindow::Create(EditorComponent* _editor)
 	outlineOpacitySlider.SetSize(XMFLOAT2(100, 18));
 	AddWidget(&outlineOpacitySlider);
 
-	transformToolLabel.Create("Transform Tool");
-	AddWidget(&transformToolLabel);
 
 	bonePickerOpacitySlider.Create(0, 1, 1, 100, "Bone Picker Opacity: ");
 	bonePickerOpacitySlider.SetTooltip("You can control the transparency of the bone selector tool");
@@ -1531,7 +1529,6 @@ void GeneralWindow::Create(EditorComponent* _editor)
 	CreateSection(debugSection, "Debug Visualization", "options.section.debug", false, { &physicsDebugCheckBox, &physicsDebugMaxDistanceSlider, &boneLinesCheckBox, &debugEmittersCheckBox, &debugForceFieldsCheckBox, &debugRaytraceBVHCheckBox, &envProbesCheckBox, &cameraVisCheckBox, &colliderVisCheckBox, &springVisCheckBox, &splineVisCheckBox, &freezeCullingCameraCheckBox, &disableAlbedoMapsCheckBox, &forceDiffuseLightingCheckBox, &forceUnlitCheckBox });
 	CreateSection(transformSection, "Transform Gizmo", "options.section.transform", false, { &transformToolOpacitySlider, &transformToolDarkenSlider, &transformToolScaleSlider, &transformToolThicknessSlider, &outlineOpacitySlider, &bonePickerOpacitySlider, &skeletonsVisibleCheckBox });
 	CreateSection(developerSection, "Developer Tools", "options.section.developer", false, { &versionCheckBox, &fpsCheckBox, &otherinfoCheckBox, &localizationButton, &eliminateCoarseCascadesButton, &ddsConvButton, &duplicateCollidersButton });
-	transformToolLabel.SetVisible(false);
 
 	SetVisible(false);
 }
