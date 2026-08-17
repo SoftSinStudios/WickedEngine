@@ -9,8 +9,8 @@
 // some application parameters can be overwritten in the executable by finding the 256 byte long pattern in the first member:
 ApplicationExeCustomization exe_customization = {
 	"Wicked Editor                                                                                                          ",
-	wi::Color(130, 210, 220, 255),
-	wi::Color(17, 30, 43, 255)
+	wi::Color(232, 234, 238, 255),
+	wi::Color(14, 16, 20, 255)
 };
 
 using namespace wi::graphics;
@@ -1170,8 +1170,6 @@ void EditorComponent::Load()
 #ifdef PLATFORM_WINDOWS_DESKTOP
 	openButton.SetTooltip(openButton.GetTooltip() + "\nYou can also drag and drop a file onto the window to open it in the Editor.");
 #endif // PLATFORM_WINDOWS_DESKTOP
-	openButton.SetColor(wi::Color(50, 100, 255, 180), wi::gui::WIDGETSTATE::IDLE);
-	openButton.SetColor(wi::Color(120, 160, 255, 255), wi::gui::WIDGETSTATE::FOCUS);
 	openButton.OnClick([this](wi::gui::EventArgs args) {
 		const uint64_t target_scene_id = GetCurrentEditorScene().id;
 		wi::helper::FileDialogParams params;
@@ -1230,8 +1228,6 @@ void EditorComponent::Load()
 	contentBrowserButton.SetShadowRadius(2);
 	contentBrowserButton.font.params.shadowColor = wi::Color::Transparent();
 	contentBrowserButton.SetTooltip("Browse content.");
-	contentBrowserButton.SetColor(wi::Color(50, 100, 255, 180), wi::gui::WIDGETSTATE::IDLE);
-	contentBrowserButton.SetColor(wi::Color(120, 160, 255, 255), wi::gui::WIDGETSTATE::FOCUS);
 	contentBrowserButton.OnClick([this](wi::gui::EventArgs args) {
 		contentBrowserWnd.SetVisible(!contentBrowserWnd.IsVisible());
 		if (contentBrowserWnd.IsVisible())
@@ -1247,8 +1243,6 @@ void EditorComponent::Load()
 	logButton.SetShadowRadius(2);
 	logButton.font.params.shadowColor = wi::Color::Transparent();
 	logButton.SetTooltip("Open the backlog (toggle with HOME button)");
-	logButton.SetColor(wi::Color(50, 160, 200, 180), wi::gui::WIDGETSTATE::IDLE);
-	logButton.SetColor(wi::Color(120, 200, 200, 255), wi::gui::WIDGETSTATE::FOCUS);
 	logButton.OnClick([](wi::gui::EventArgs args) {
 		wi::backlog::Toggle();
 		});
@@ -1260,8 +1254,6 @@ void EditorComponent::Load()
 	profilerButton.SetShadowRadius(2);
 	profilerButton.font.params.shadowColor = wi::Color::Transparent();
 	profilerButton.SetTooltip("View the profiler frame timings");
-	profilerButton.SetColor(wi::Color(50, 160, 200, 180), wi::gui::WIDGETSTATE::IDLE);
-	profilerButton.SetColor(wi::Color(120, 200, 200, 255), wi::gui::WIDGETSTATE::FOCUS);
 	profilerButton.OnClick([this](wi::gui::EventArgs args) {
 		profilerWnd.SetVisible(!wi::profiler::IsEnabled());
 		wi::profiler::SetEnabled(!wi::profiler::IsEnabled());
@@ -1274,8 +1266,6 @@ void EditorComponent::Load()
 	cinemaButton.SetShadowRadius(2);
 	cinemaButton.font.params.shadowColor = wi::Color::Transparent();
 	cinemaButton.SetTooltip("Enter cinema mode (all HUD disabled). Press ESC to return to normal.");
-	cinemaButton.SetColor(wi::Color(50, 160, 200, 180), wi::gui::WIDGETSTATE::IDLE);
-	cinemaButton.SetColor(wi::Color(120, 200, 200, 255), wi::gui::WIDGETSTATE::FOCUS);
 	cinemaButton.OnClick([this](wi::gui::EventArgs args) {
 		cinema_mode_saved_debugEnvProbes = wi::renderer::GetToDrawDebugEnvProbes();
 		cinema_mode_saved_debugCameras = wi::renderer::GetToDrawDebugCameras();
@@ -1312,8 +1302,6 @@ void EditorComponent::Load()
 	fullscreenButton.SetShadowRadius(2);
 	fullscreenButton.font.params.shadowColor = wi::Color::Transparent();
 	fullscreenButton.SetTooltip("Toggle full screen");
-	fullscreenButton.SetColor(wi::Color(50, 160, 200, 180), wi::gui::WIDGETSTATE::IDLE);
-	fullscreenButton.SetColor(wi::Color(120, 200, 200, 255), wi::gui::WIDGETSTATE::FOCUS);
 	fullscreenButton.OnClick([this](wi::gui::EventArgs args) {
 		bool fullscreen = main->config.GetBool("fullscreen");
 		fullscreen = !fullscreen;
@@ -1333,8 +1321,6 @@ void EditorComponent::Load()
 	bugButton.SetShadowRadius(2);
 	bugButton.font.params.shadowColor = wi::Color::Transparent();
 	bugButton.SetTooltip("Opens a browser window where you can report a bug or an issue.\nURL: https://github.com/turanszkij/WickedEngine/issues/new");
-	bugButton.SetColor(wi::Color(50, 160, 200, 180), wi::gui::WIDGETSTATE::IDLE);
-	bugButton.SetColor(wi::Color(120, 200, 200, 255), wi::gui::WIDGETSTATE::FOCUS);
 	bugButton.OnClick([](wi::gui::EventArgs args) {
 		wi::helper::OpenUrl("https://github.com/turanszkij/WickedEngine/issues/new");
 	});
@@ -1346,8 +1332,6 @@ void EditorComponent::Load()
 	aboutButton.SetShadowRadius(2);
 	aboutButton.font.params.shadowColor = wi::Color::Transparent();
 	aboutButton.SetTooltip("About...");
-	aboutButton.SetColor(wi::Color(50, 160, 200, 180), wi::gui::WIDGETSTATE::IDLE);
-	aboutButton.SetColor(wi::Color(120, 200, 200, 255), wi::gui::WIDGETSTATE::FOCUS);
 	aboutButton.OnClick([this](wi::gui::EventArgs args) {
 		aboutWindow.SetVisible(!aboutWindow.IsVisible());
 		});

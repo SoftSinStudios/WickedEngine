@@ -9,6 +9,7 @@ static const std::string languages_directory = wi::helper::GetCurrentPath() + "/
 
 enum class Theme : uint64_t
 {
+	SoftSin,
 	Dark,
 	Bright,
 	Soft,
@@ -526,6 +527,18 @@ void GeneralWindow::Create(EditorComponent* _editor)
 		{
 		default:
 			break;
+		case Theme::SoftSin:
+			editor->main->config.GetSection("options").Set("theme", "SoftSin");
+			theme_color_idle = wi::Color(34, 38, 46, 255);
+			theme_color_focus = wi::Color(176, 68, 94, 255);
+			theme_color_background = wi::Color(21, 24, 30, 255);
+			theme.shadow_color = wi::Color(53, 59, 70, 220);
+			theme.font.color = wi::Color(232, 234, 238, 255);
+			theme.font.shadow_color = wi::Color(0, 0, 0, 160);
+			theme_color_gradient = wi::Color(143, 52, 73, 140);
+			theme_color_wave = wi::Color(176, 68, 94, 70);
+			editor->themeEditorWnd.imageResource = {};
+			break;
 		case Theme::Dark:
 			editor->main->config.GetSection("options").Set("theme", "Dark");
 			editor->themeEditorWnd.imageResource = {};
@@ -674,8 +687,8 @@ void GeneralWindow::Create(EditorComponent* _editor)
 		theme.tooltipFont = theme.font;
 		theme.tooltip_shadow_color = theme.shadow_color;
 
-		wi::Color theme_color_active = wi::Color::White();
-		wi::Color theme_color_deactivating = wi::Color::lerp(theme_color_focus, wi::Color::White(), 0.5f);
+		wi::Color theme_color_active = (Theme)args.userdata == Theme::SoftSin ? wi::Color(208, 90, 114, 255) : wi::Color::White();
+		wi::Color theme_color_deactivating = wi::Color::lerp(theme_color_focus, theme_color_active, 0.5f);
 
 		// Customize whole gui:
 		wi::gui::GUI& gui = editor->GetGUI();
@@ -1506,9 +1519,10 @@ void GeneralWindow::ReloadThemes()
 	if (editor->main->config.GetSection("options").Has("theme"))
 		currentTheme = editor->main->config.GetSection("options").GetText("theme");
 	else
-		currentTheme = "Dark";
+		currentTheme = "SoftSin";
 
 	themeCombo.ClearItems();
+	themeCombo.AddItem("SoftSin " ICON_DARK, (uint64_t)Theme::SoftSin);
 	themeCombo.AddItem("Dark " ICON_DARK, (uint64_t)Theme::Dark);
 	themeCombo.AddItem("Bright " ICON_BRIGHT, (uint64_t)Theme::Bright);
 	themeCombo.AddItem("Soft " ICON_SOFT, (uint64_t)Theme::Soft);
@@ -1525,7 +1539,11 @@ void GeneralWindow::ReloadThemes()
 		themeCombo.AddItem(x, (uint64_t)Theme::User);
 	}
 
-	if (currentTheme == "Dark")
+	if (currentTheme == "SoftSin")
+	{
+		themeCombo.SetSelectedByUserdata((uint64_t)Theme::SoftSin);
+	}
+	else if (currentTheme == "Dark")
 	{
 		themeCombo.SetSelectedByUserdata((uint64_t)Theme::Dark);
 	}
